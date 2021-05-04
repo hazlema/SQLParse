@@ -24,4 +24,4 @@ To change the query alter the value of the property:<br>
 
 The query will be parsed automatically
 
-![Alt text](https://github.com/hazlema/SQLParse/blob/master/img/SQLParse.png "SQLParse")
+![Alt text](/img/SQLParse.png "SQLParse")
