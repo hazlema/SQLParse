@@ -8,7 +8,7 @@ Only supports select, where and orderby
 You only need to initialize the SQLParse object once
 
 If you want to change the query:
-**object.query = "select * where new=query"**
+**object.query = "select * where new='query'"**
 
 The query will be parsed automatically
 
