@@ -1,0 +1,25 @@
+{
+  "name": "sqlparse",
+  "version": "1.0.0",
+  "description": "Parse a basic SQL statment, only supports select, where and orderby",
+  "main": "test.js",
+  "scripts": {
+    "start": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hazlema/SQLParse.git"
+  },
+  "keywords": [
+    "sql",
+    "parse",
+    "node",
+    "query"
+  ],
+  "author": "Matthew Hazlett",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hazlema/SQLParse/issues"
+  },
+  "homepage": "https://github.com/hazlema/SQLParse#readme"
+}
