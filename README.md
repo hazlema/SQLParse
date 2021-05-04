@@ -2,7 +2,6 @@
 
 Basic JS SQLParser, creates an object (array of arrays) of the query.
 
-Does not support nested brackets (I may add that later).<br>
 Only supports select, where and orderby
 
 ### *Functions*

@@ -70,6 +70,30 @@ function preParse(str) {
 }
 
 /**
+ * Function: parenSplit
+ * Purpose:  Split a string to respect parenthesis
+ * Params:   element(string) - The element to parse
+ * Returns:  []
+ ****************************************************************/
+ function parenSplit(element) {
+    const regex  = /^([\(]+)?(.*[^\)])([\)]+)?$/g;
+
+    let results = [];
+
+    if ((matches = regex.exec(element)) !== null) {
+        matches.forEach((match, groupIndex) => {
+            if (groupIndex >= 1) {
+                if (match && (match.indexOf('(')) != -1) results.push(match)
+                else if (match && (match.indexOf(')')) != -1) results.push(match)
+                else if (match) results.push(keyValueSplit(match))
+            };
+        });
+    }
+
+    return results;
+}
+
+/**
  * Function: parse
  * Purpose:  Split a SQL(ish) string into an object
  * Params:   query(string) - The string to parse
@@ -79,6 +103,7 @@ function preParse(str) {
     const regex  = /([^\s\"',]+|\"([^\"]*)\"|'([^']*)')+/g;
     const keys   = /^select$|^where$|^orderby$/i;
     const orders = /^asc$|^desc$/i;
+    const parens = /^(\(+)|(\)+)$/g;
 
     let Segments = {Select: [], Where: [], OrderBy: []};
     let key      = null;
@@ -95,7 +120,13 @@ function preParse(str) {
                 if (key == 'OrderBy' && orders.exec(matched)) {
                     let index = Segments[key].length - 1;                
                     Segments[key][index] = [Segments[key][index], matched];
-                } else Segments[key].push(keyValueSplit(matched))
+                } else {
+                    if (key == 'Where' && parens.exec(matched)) {
+                        parenSplit(matched).forEach(x => Segments[key].push(x));
+                    } else {
+                        Segments[key].push(keyValueSplit(matched))
+                    }
+                }
             }
         }
     }
