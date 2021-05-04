@@ -5,10 +5,11 @@ Basic JS SQLParser, creates an object (array of arrays) of the query.
 Does not support nested brackets
 Only supports select, where and orderby
 
+[!NOTE]
 You only need to initialize the SQLParse object once
 
-If you want to change the query:
-**object.query = "select * where new='query'"**
+To change the query alter the value of the property:<br>
+```**object.query = "select * where new=true"**```
 
 The query will be parsed automatically
 
