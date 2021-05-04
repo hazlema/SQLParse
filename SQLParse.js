@@ -57,7 +57,7 @@ function preParse(str) {
  *           - string will be returned if there is no splitting
  ****************************************************************/
  function keyValueSplit(str) {
-    const regex = /(?:([\w\d\s\(\)\'\"]+)([\>\=<\!]+)(.*))/;
+    const regex = /(?:([\w\d\s\(\)\'\"]+)([\>\=\<\!]+)(.*))/;
     
     if ((matched = regex.exec(str)) !== null) {
         let results=[];
@@ -78,6 +78,7 @@ function preParse(str) {
  function parse(query) {
     const regex  = /([^\s\"',]+|\"([^\"]*)\"|'([^']*)')+/g;
     const keys   = /select|where|orderby/i;
+    const orders = /asc|desc/i;
 
     let Segments = {Select: [], Where: [], OrderBy: []};
     let key      = '';
@@ -90,7 +91,14 @@ function preParse(str) {
             if (matched.toLowerCase() == "where")   key = "Where"
             if (matched.toLowerCase() == "orderby") key = "OrderBy"
         } else {
-            if (key != '') Segments[key].push( keyValueSplit(matched) )
+            if (key != '') {
+                if (key == 'OrderBy' && orders.exec(matched)) {
+                    let index = Segments[key].length - 1;
+                    
+                    Segments[key][index] = [Segments[key][index], matched];
+                } else 
+                    Segments[key].push( keyValueSplit(matched) )
+            }
         }
     }
 

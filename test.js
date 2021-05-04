@@ -1,6 +1,6 @@
 const SQLParse = require('./SQLParse.js');
 
-let parser = new SQLParse('select max(name), num, color where name=0 and color = "Bright Blue"');
+let parser = new SQLParse('select max(name), num, color where name=0 and color = "Bright Blue" orderby name asc, color desc, num');
 let toJson = function(data) { return JSON.stringify(data) }
 
 console.log(`
