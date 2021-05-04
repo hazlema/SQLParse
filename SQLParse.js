@@ -77,11 +77,11 @@ function preParse(str) {
  ****************************************************************/
  function parse(query) {
     const regex  = /([^\s\"',]+|\"([^\"]*)\"|'([^']*)')+/g;
-    const keys   = /select|where|orderby/i;
-    const orders = /asc|desc/i;
+    const keys   = /^select$|^where$|^orderby$/i;
+    const orders = /^asc$|^desc$/i;
 
     let Segments = {Select: [], Where: [], OrderBy: []};
-    let key      = '';
+    let key      = null;
 
     while ((matches = regex.exec(query)) !== null) {
         let matched = matches[0];
@@ -91,13 +91,11 @@ function preParse(str) {
             if (matched.toLowerCase() == "where")   key = "Where"
             if (matched.toLowerCase() == "orderby") key = "OrderBy"
         } else {
-            if (key != '') {
+            if (key) {
                 if (key == 'OrderBy' && orders.exec(matched)) {
-                    let index = Segments[key].length - 1;
-                    
+                    let index = Segments[key].length - 1;                
                     Segments[key][index] = [Segments[key][index], matched];
-                } else 
-                    Segments[key].push( keyValueSplit(matched) )
+                } else Segments[key].push(keyValueSplit(matched))
             }
         }
     }
