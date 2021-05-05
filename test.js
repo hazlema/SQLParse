@@ -1,93 +1,57 @@
-const SQLParse = require('./SQLParse.js');
+const SQLParse = require(`./SQLParse.js`);
 
-let parser = new SQLParse('select max(name), num, color where ((name=0 and color = "Bright Blue") or num = 5) orderby name asc, color desc, num');
-let toJson = function(data) { return JSON.stringify(data) }
-
-let run = function(data) {
-    data.forEach(row => {
-        if (parser.filterWhere(row) == true) console.log(row)
-    });  
-}
-
-var db = [
-    { name: "Matthew", color: "red", num: 90 },
-    { name: "fraNK", color: "red", num: 8 },
-    { name: "Alice", color: "blue" },
-    { name: "alex", color: "blue", num: 0.1 },
-    { name: "Frank", color: "bright blue", num: 70 },
-    { name: "Grace", color: "blue", num: 300 },
-    { name: "steve", color: "yellow", num: 0 },
-    { name: "Q", color: "yellow" },
-    { name: "frank", color: "yellow", num: 20 },
-    { name: "Frank", color: "green", num: 0.2 },
-    { name: "Molly", color: "green", num: 50 },
-    { name: "Sandy", color: "green", num: 0 },
-    { name: "Angie", color: "bright blue", num: 300 },
+// Testing database
+const db = [
+        { name: "Matthew", color:  "red",         num: 90 },
+        { name: "fraNK",   color:  "red",         num: 8 },
+        { name: "Alice",   color:  "blue" },
+        { name: "alex",    color:  "blue",        num: 0.1 },
+        { name: "Frank",   color:  "bright blue", num: 70 },
+        { name: "Grace",   color:  "blue",        num: 300 },
+        { name: "steve",   color:  "yellow",      num: 0 },
+        { name: "Q",       series: "TNG" },
+        { name: "sisko",   series: "DS9" },
+        { name: "Quark",   series: "DS9" },
+        { name: "Garak",   series: "DS9" },
+        { name: "frank",   color:  "yellow",      num: 20 },
+        { name: "Frank",   color:  "green",       num: 0.2 },
+        { name: "Molly",   color:  "green",       num: 50 },
+        { name: "Sandy",   color:  "green",       num: 0 },
+        { name: "Angie",   color:  "bright blue", num: 300 },
 ];
 
-/ =[ Test 1 ]======================================/
+let parser = new SQLParse(/* You can put a query here as well */);
 
-console.log(`
-    Query:       ${parser.query}
+// Support functions
+let toJson = function(data) { return JSON.stringify(data) }
+let test   = function(index, query, data) {
+    parser.query = query;
 
-    hasSelect:   ${parser.hasSelect()} / ${toJson(parser.getSelect())}
-    hasWhere:    ${parser.hasWhere()} / ${toJson(parser.getWhere())}
-    hasOrderBy:  ${parser.hasOrderBy()} / ${toJson(parser.getOrderBy())}
+    console.log(`\n` +
+        `===[ Test #${index} ]==============================================\n` +
+        `Query:       ${parser.query}\n\n` +
+        `hasSelect:   ${parser.hasSelect()} / ${toJson(parser.getSelect())}\n` +
+        `hasWhere:    ${parser.hasWhere()} / ${toJson(parser.getWhere())}\n` +
+        `hasOrderBy:  ${parser.hasOrderBy()} / ${toJson(parser.getOrderBy())}\n\n` +
+        `Parsed query structure:\n` +
+        `${parser.renderTree()}\n` +
+        `===[ Test #${index} Results ]======================================`);
 
-    ${parser.renderTree()}
-`);
+    if (data) {
+        data.forEach(row => {
+            if (parser.filterWhere(row) == true) console.log(row);
+        })
+    } else console.log(`Parsing test, No results expected`);
 
+}
 
-/ =[ Test 2 ]======================================/
-
-parser.query = "where (name=/frank/i and color=/green/i)";
-console.log(`
-    Query: ${parser.query}, One result expected
-`);
-
-run(db);
-
-/ =[ Test 3 ]======================================/
-
-parser.query = "where (color=/green/i or num=20)";
-console.log(`
-    Query: ${parser.query}, Four results expected
-`);
-
-run(db);
-
-/ =[ Test 4 ]======================================/
-
-parser.query = "where (num=null)";
-console.log(`
-    Query: ${parser.query}, Two results expected
-`);
-
-run(db);
-
-/ =[ Test 5 ]======================================/
-
-parser.query = "where (color=/bright\\sblue/i)";
-console.log(`
-    Query: ${parser.query}, Two results expected
-`);
-
-run(db);
-
-/ =[ Test 6 ]======================================/
-
-parser.query = "where (color='bright blue')";
-console.log(`
-    Query: ${parser.query}, Two results expected
-`);
-
-run(db);
-
-/ =[ Test 7 ]======================================/
-
-parser.query = "where (name=/^f/i)";
-console.log(`
-    Query: ${parser.query}, Four results expected
-`);
-
-run(db);
+// Tests
+test(1, `select max(name), num, color where ((name=0 and color = "Bright Blue") or num = 5) orderby name asc, color desc, num`);
+test(2, `where (name=/frank/i and color=/green/i)`, db);
+test(3, `where (color=/green/i or num=20)`, db);
+test(4, `where (num=null)`, db);
+test(5, `where (color=/bright\\sblue/i)`, db);
+test(6, `where (color="bright blue")`, db);
+test(7, `where (name=/^f/i)`, db);
+test(8, `where (name!=/^f/i)`, db);
+test(9, `where (series = "DS9" or series="TNG")`, db);

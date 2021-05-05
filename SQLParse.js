@@ -134,7 +134,13 @@ function preParse(str) {
 
 /======================================================================/
 
-function buildWhere(where) {
+/**
+ * Function: buildWhere
+ * Purpose:  Build a fn that will test against the where statement
+ * Params:   where(array) - The parsed where statement
+ * Returns:  fn
+ ****************************************************************/
+ function buildWhere(where) {
     let fn    = '';
     let regex = /^[\/].*[\/ig]$/;
     let trans = {'=':'==', and:'&&', or:'||'}
@@ -144,12 +150,15 @@ function buildWhere(where) {
     where.forEach(ele => {
         if (typeof ele != 'object') fn += `${translate(ele)} `
         else if (regex.exec(ele[2])) {
-            if (ele[1] == '!=') fn += `(data['${ele[0]}'].match(${ele[2]}) == null) `;
-            else fn += `(data['${ele[0]}'].match(${ele[2]}) != null) `;
+            if (ele[1] == '!=') fn += `( isNull(data['${ele[0]}']).match(${ele[2]} ) == null) `;
+            else fn += `(isNull(data['${ele[0]}']).match(${ele[2]}) != null) `;
         } else fn += `data['${ele[0]}']${translate(ele[1])}${ele[2]} `;
     });
 
-    return new Function("data", `return (${fn})`);
+    return new Function("data", `
+        function isNull(ele) { return ele ? ele : '' }
+        return (${fn})
+    `);
 }
-
+ 
 module.exports = SQLParse;
