@@ -4,12 +4,11 @@ let parser = new SQLParse('select max(name), num, color where ((name=0 and color
 let toJson = function(data) { return JSON.stringify(data) }
 
 console.log(`
-    Query:      ${parser.query}
+    Query:       ${parser.query}
 
-    hasSelect:  ${parser.hasSelect()} / ${toJson(parser.getSelect())}
-    hasWhere:   ${parser.hasWhere()} / ${toJson(parser.getWhere())}
-    hasOrderBy: ${parser.hasOrderBy()} / ${toJson(parser.getOrderBy())}
+    hasSelect:   ${parser.hasSelect()} / ${toJson(parser.getSelect())}
+    hasWhere:    ${parser.hasWhere()} / ${toJson(parser.getWhere())}
+    hasOrderBy:  ${parser.hasOrderBy()} / ${toJson(parser.getOrderBy())}
 
     ${parser.renderTree()}
 `);
-

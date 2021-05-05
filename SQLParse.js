@@ -22,8 +22,9 @@ Object.defineProperty(SQLParse.prototype, "query", {
         return this.Query; 
     },
     set(query) {
-        this.Query  = preParse(query);
-        this.Parsed = parse(this.Query);
+        this.Query       = preParse(query);
+        this.Parsed      = parse(this.Query);
+        this.filterWhere = buildWhere(this.Parsed.Where);
     }
 });
 
@@ -45,7 +46,6 @@ function preParse(str) {
             if (idx == 1) str = str.replace(search, match);
         });
     }
-
     return str;    
 }
 
@@ -89,7 +89,6 @@ function preParse(str) {
             };
         });
     }
-
     return results;
 }
 
@@ -115,23 +114,38 @@ function preParse(str) {
             if (matched.toLowerCase() == "select")  key = "Select"
             if (matched.toLowerCase() == "where")   key = "Where"
             if (matched.toLowerCase() == "orderby") key = "OrderBy"
-        } else {
-            if (key) {
-                if (key == 'OrderBy' && orders.exec(matched)) {
-                    let index = Segments[key].length - 1;                
-                    Segments[key][index] = [Segments[key][index], matched];
-                } else {
-                    if (key == 'Where' && parens.exec(matched)) {
-                        parenSplit(matched).forEach(x => Segments[key].push(x));
-                    } else {
-                        Segments[key].push(keyValueSplit(matched))
-                    }
-                }
+        } else if (key) {
+            if (key == 'OrderBy' && orders.exec(matched)) {
+                let index = Segments[key].length - 1;                
+                Segments[key][index] = [Segments[key][index], matched];
+            } else if (key == 'Where' && parens.exec(matched)) {
+                parenSplit(matched).forEach(x => Segments[key].push(x));
+            } else {
+                Segments[key].push(keyValueSplit(matched))
             }
         }
     }
-
     return Segments;
+}
+
+/======================================================================/
+
+function buildWhere(where) {
+    let fn    = 'return ';
+    let regex = /^[\/].*[\/ig]$/;
+    let trans = {'=':'==', and:'&&', or:'||'}
+
+    function translate(ele) { return trans[ele] ? trans[ele] : ele; }
+
+    where.forEach(ele => {
+        if (typeof ele != 'object') fn += `${translate(ele)} `
+        else if (regex.exec(ele[2])) {
+            if (ele[1] == '!=') fn += `(data['${ele[0]}'].match(${ele[2]}) == null) `;
+            else fn += `data['${ele[0]}'].match(${ele[2]}) `;
+        } else fn += `data['${ele[0]}']${translate(ele[1])}${ele[2]} `;
+    });
+
+    return new Function("data", fn);
 }
 
 module.exports = SQLParse;

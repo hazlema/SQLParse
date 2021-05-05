@@ -14,12 +14,21 @@ Only supports select, where and orderby
 - **getSelect**: Return the Select of the parsed query
 - **getWhere**: Return the Where of the parsed query
 - **getOrderBy**: Return the OrderBy of the parsed query<br><br>
+- **filterWhere**: Return true|false if the dataset satisfies the where<br><br>
 - **renderTree**: Render the parsed query tree
 
 ##### *You only need to initialize the SQLParse object once*
 
 To change the query alter the value of the property:<br>
 ```object.query = "select * where new=true"```
+
+### Quick example
+`let parser = new SQLParse('where (name=/matthew/i and color = "Blue")');`
+
+Returns true:
+`parser.filterWhere({name:"matthew", color="Blue"});`
+
+
 
 The query will be parsed automatically
 
