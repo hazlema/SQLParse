@@ -1,19 +1,23 @@
-// Simple SQL(ish) processor
-// doesn't handle nested brackets and only supports Select, Where and OrderBy
+/**
+ * Simple SQL(ish) processor
+ * Supports: Select, Where, OrderBy, Parentheses
+ *           Regular Expression queries
+ *           Strings and Numbers
+ *********************************************************/
 let SQLParse = function(queryString) {
     if (queryString) this.query = queryString;
 
-    this.hasQuery   = function() { return this.Query                 != ""; }
-    this.hasSelect  = function() { return this.Parsed.Select.length  != 0;  }
-    this.hasWhere   = function() { return this.Parsed.Where.length   != 0;  }
-    this.hasOrderBy = function() { return this.Parsed.OrderBy.length != 0;  }
+    this.hasQuery    = function() { return this.Query                 != ""; }
+    this.hasSelect   = function() { return this.Parsed.Select.length  != 0;  }
+    this.hasWhere    = function() { return this.Parsed.Where.length   != 0;  }
+    this.hasOrderBy  = function() { return this.Parsed.OrderBy.length != 0;  }
     
-    this.get        = function() { return this.Parsed;         }
-    this.getSelect  = function() { return this.Parsed.Select;  }
-    this.getWhere   = function() { return this.Parsed.Where;   }
-    this.getOrderBy = function() { return this.Parsed.OrderBy; }
-    
-    this.renderTree = function() { return JSON.stringify(this.Parsed, null, 5) }  
+    this.get         = function() { return this.Parsed;         }
+    this.getSelect   = function() { return this.Parsed.Select;  }
+    this.getWhere    = function() { return this.Parsed.Where;   }
+    this.getOrderBy  = function() { return this.Parsed.OrderBy; }
+  
+    this.renderTree  = function() { return JSON.stringify(this.Parsed, null, 5) }  
 }
 
 // Changing the query property will repopulate the tree
@@ -131,7 +135,7 @@ function preParse(str) {
 /======================================================================/
 
 function buildWhere(where) {
-    let fn    = 'return ';
+    let fn    = '';
     let regex = /^[\/].*[\/ig]$/;
     let trans = {'=':'==', and:'&&', or:'||'}
 
@@ -141,11 +145,11 @@ function buildWhere(where) {
         if (typeof ele != 'object') fn += `${translate(ele)} `
         else if (regex.exec(ele[2])) {
             if (ele[1] == '!=') fn += `(data['${ele[0]}'].match(${ele[2]}) == null) `;
-            else fn += `data['${ele[0]}'].match(${ele[2]}) `;
+            else fn += `(data['${ele[0]}'].match(${ele[2]}) != null) `;
         } else fn += `data['${ele[0]}']${translate(ele[1])}${ele[2]} `;
     });
 
-    return new Function("data", fn);
+    return new Function("data", `return (${fn})`);
 }
 
 module.exports = SQLParse;
