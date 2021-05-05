@@ -150,7 +150,7 @@ function preParse(str) {
     where.forEach(ele => {
         if (typeof ele != 'object') fn += `${translate(ele)} `
         else if (regex.exec(ele[2])) {
-            if (ele[1] == '!=') fn += `( isNull(data['${ele[0]}']).match(${ele[2]} ) == null) `;
+            if (ele[1] == '!=') fn += `(isNull(data['${ele[0]}']).match(${ele[2]}) == null) `;
             else fn += `(isNull(data['${ele[0]}']).match(${ele[2]}) != null) `;
         } else fn += `data['${ele[0]}']${translate(ele[1])}${ele[2]} `;
     });
