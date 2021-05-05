@@ -22,14 +22,12 @@ Only supports select, where and orderby
 To change the query alter the value of the property:<br>
 ```object.query = "select * where new=true"```
 
+*The query will be parsed automatically*
+
 ### Quick example
 `let parser = new SQLParse('where (name=/matthew/i and color = "Blue")');`
 
 Returns true:
 `parser.filterWhere({name:"matthew", color="Blue"});`
-
-
-
-The query will be parsed automatically
 
 ![Alt text](/img/SQLParse.png "SQLParse")
