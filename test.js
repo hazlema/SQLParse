@@ -37,21 +37,27 @@ let test   = function(index, query, data) {
         `${parser.renderTree()}\n` +
         `===[ Test #${index} Results ]======================================`);
 
+   
     if (data) {
-        data.forEach(row => {
-            if (parser.filterWhere(row) == true) console.log(row);
-        })
-    } else console.log(`Parsing test, No results expected`);
+        if (parser.hasOrderBy) {
+            parser.filterSort(data);
+        }
 
+        if (parser.hasWhere) {
+            data.forEach(row => {
+                if (parser.filterWhere(row) == true) console.log(row);
+            })
+        }
+    } else console.log(`Parsing test, No results expected`);
 }
 
 // Tests
 test(1, `select max(name), num, color where ((name=0 and color = "Bright Blue") or num = 5) orderby name asc, color desc, num`);
-test(2, `where (name=/frank/i and color=/green/i)`, db);
-test(3, `where (color=/green/i or num=20)`, db);
-test(4, `where (num=null)`, db);
-test(5, `where (color=/bright\\sblue/i)`, db);
-test(6, `where (color="bright blue")`, db);
-test(7, `where (name=/^f/i)`, db);
-test(8, `where (name!=/^f/i)`, db);
-test(9, `where (series = "DS9" or series="TNG")`, db);
+test(2, `where (name=/frank/i and color=/green/i) orderby name, num`, db);
+test(3, `where (color=/green/i or num=20) orderby name, num`, db);
+test(4, `where (num=null) orderby name, num`, db);
+test(5, `where (color=/bright\\sblue/i) orderby name, num`, db);
+test(6, `where (color="bright blue") orderby name, num`, db);
+test(7, `where (name=/^f/i) orderby name, num`, db);
+test(8, `where (name!=/^f/i) orderby name, num`, db);
+test(9, `where (series = "DS9" or series="TNG") orderby series`, db);

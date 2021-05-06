@@ -17,6 +17,8 @@ let SQLParse = function(queryString) {
     this.getWhere    = function() { return this.Parsed.Where;   }
     this.getOrderBy  = function() { return this.Parsed.OrderBy; }
   
+    this.filterSort  = function(db) { return customSort(this.Parsed.OrderBy, db) };
+   
     this.renderTree  = function() { return JSON.stringify(this.Parsed, null, 5) }  
 }
 
@@ -160,5 +162,82 @@ function preParse(str) {
         return (${fn})
     `);
 }
- 
+
+/**
+ * Function: customSort
+ * Purpose:  Sort data using the parsed SQL
+ * Params:   OrderBy(multi) - The parsed OrderBy statement
+ *           data(object)   - Data to sort
+ * Returns:  object
+ ****************************************************************/
+ function customSort(groups, data) {
+    function isNumber(n)      { return !isNaN(parseFloat(n)) && isFinite(n); }
+    function isNull(obj, def) { return obj ? obj : def;                      }
+    
+    function getSchema(data)  {
+        let Schema = {};
+
+        // Get info
+        data.forEach(row => {
+            Object.keys(row).forEach(col => {
+                if (!Schema.hasOwnProperty(col)) 
+                    Schema[col] = {string:0, number:0};
+                
+                if (isNumber(row[col])) Schema[col].number += 1;
+                else Schema[col].string += 1;
+            });
+        });
+
+        // Set types
+        Object.keys(Schema).forEach(key => {
+            if ((Schema[key].number != 0) && (Schema[key].string != 0)) {
+                console.log(`!WARNING!: Database column '${key}' has multiple types, assuming string`)
+                Schema[key]['type'] = "isString";
+            } else Schema[key]['type'] = Schema[key].number != 0 ? "isNumber" : "isString";
+        });
+
+        return Schema;
+    }
+
+    /=========================================================================/
+
+    let schema = getSchema(data);
+
+    // Check groups for errors 
+    if (!Array.isArray(groups)) groups = [[groups, "desc"]];
+    else groups = groups.map(group => { 
+        if (Array.isArray(group) == false) return [group, "desc"]
+        if (group.length == 1) group.push("desc") 
+        return group;
+    });
+    
+    data.sort(function (a, b) {
+        let group = [];
+
+        groups.forEach(key => {
+            let isCol = key[0];
+            let isRev = (key[1] == "asc") ? true : false;
+
+            //console.log(key, isCol);
+            if (schema[isCol].type == "isNumber") {
+                let col1 = a[isCol] ? Number(a[isCol]) : -90000000;
+                let col2 = b[isCol] ? Number(b[isCol]) : -90000000;
+                
+                if (isRev) group.push(col1 - col2);
+                else group.push(col2 - col1);
+            } else {
+                let col1 = a[isCol] ? a[isCol].toString().toLowerCase() : "";
+                let col2 = b[isCol] ? b[isCol].toString().toLowerCase() : "";
+
+                if (isRev) group.push(col1.localeCompare(col2));
+                else group.push(col2.localeCompare(col1));
+            }
+        });
+
+        return eval(group.join(' || '));
+    });
+
+    return data;
+}
+
 module.exports = SQLParse;
