@@ -39,15 +39,8 @@ let test   = function(index, query, data) {
 
    
     if (data) {
-        if (parser.hasOrderBy) {
-            parser.filterSort(data);
-        }
-
-        if (parser.hasWhere) {
-            data.forEach(row => {
-                if (parser.filterWhere(row) == true) console.log(row);
-            })
-        }
+        if (parser.hasOrderBy) parser.sort(data);
+        if (parser.hasWhere)   console.log( parser.where(data) );
     } else console.log(`Parsing test, No results expected`);
 }
 

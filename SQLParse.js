@@ -7,19 +7,23 @@
 let SQLParse = function(queryString) {
     if (queryString) this.query = queryString;
 
-    this.hasQuery    = function() { return this.Query                 != ""; }
-    this.hasSelect   = function() { return this.Parsed.Select.length  != 0;  }
-    this.hasWhere    = function() { return this.Parsed.Where.length   != 0;  }
-    this.hasOrderBy  = function() { return this.Parsed.OrderBy.length != 0;  }
+ /* this.query       = Assigned in the defineProperty for query */
+
+    this.hasQuery    = function()   { return this.Query                 != ""; }
+    this.hasSelect   = function()   { return this.Parsed.Select.length  != 0;  }
+    this.hasWhere    = function()   { return this.Parsed.Where.length   != 0;  }
+    this.hasOrderBy  = function()   { return this.Parsed.OrderBy.length != 0;  }
     
-    this.get         = function() { return this.Parsed;         }
-    this.getSelect   = function() { return this.Parsed.Select;  }
-    this.getWhere    = function() { return this.Parsed.Where;   }
-    this.getOrderBy  = function() { return this.Parsed.OrderBy; }
-  
-    this.filterSort  = function(db) { return customSort(this.Parsed.OrderBy, db) };
-   
-    this.renderTree  = function() { return JSON.stringify(this.Parsed, null, 5) }  
+    this.get         = function()   { return this.Parsed;         }
+    this.getSelect   = function()   { return this.Parsed.Select;  }
+    this.getWhere    = function()   { return this.Parsed.Where;   }
+    this.getOrderBy  = function()   { return this.Parsed.OrderBy; }
+    
+ /* this.isWhere = Assigned in the defineProperty for query */
+    this.renderTree  = function()   { return JSON.stringify(this.Parsed, null, 5) }  
+
+    this.where       = function(db) { return Where(this.isWhere, db)       };
+    this.sort        = function(db) { return Sort(this.Parsed.OrderBy, db) };
 }
 
 // Changing the query property will repopulate the tree
@@ -28,9 +32,9 @@ Object.defineProperty(SQLParse.prototype, "query", {
         return this.Query; 
     },
     set(query) {
-        this.Query       = preParse(query);
-        this.Parsed      = parse(this.Query);
-        this.filterWhere = buildWhere(this.Parsed.Where);
+        this.Query   = preParse(query);
+        this.Parsed  = parse(this.Query);
+        this.isWhere = buildWhere(this.Parsed.Where);
     }
 });
 
@@ -163,6 +167,16 @@ function preParse(str) {
     `);
 }
 
+function Where(whereFn, data) {
+    rows = [];
+
+    data.forEach(row => {
+        if (whereFn(row) == true) rows.push(row);
+    })
+
+    return rows;
+}
+
 /**
  * Function: customSort
  * Purpose:  Sort data using the parsed SQL
@@ -170,7 +184,7 @@ function preParse(str) {
  *           data(object)   - Data to sort
  * Returns:  object
  ****************************************************************/
- function customSort(groups, data) {
+ function Sort(groups, data) {
     function isNumber(n)      { return !isNaN(parseFloat(n)) && isFinite(n); }
     function isNull(obj, def) { return obj ? obj : def;                      }
     
