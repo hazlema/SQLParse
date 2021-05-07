@@ -19,12 +19,14 @@ let SQLParse = function(queryString) {
     this.getWhere    = function()   { return this.Parsed.Where;   }
     this.getOrderBy  = function()   { return this.Parsed.OrderBy; }
     
- /* this.isWhere = Assigned in the defineProperty for query */
+ /* this.isWhere     = Assigned in the defineProperty for query */
     this.renderTree  = function()   { return JSON.stringify(this.Parsed, null, 5) }  
 
-    this.where       = function(db) { return Where(this.isWhere, db)       };
-    this.sort        = function(db) { return Sort(this.Parsed.OrderBy, db) };
-    this.select      = function(db) { return Select(this.Parsed.Select, db) };
+    this.where       = function(db) { return Where(this, this.isWhere, db)        };
+    this.sort        = function(db) { return Sort(this, this.Parsed.OrderBy, db)  };
+    this.select      = function(db) { return Select(this, this.Parsed.Select, db) };
+
+    this.results     = function()   { return this.LastResult }; 
 }
 
 // Changing the query property will repopulate the tree
@@ -168,27 +170,20 @@ function preParse(str) {
     `);
 }
 
-function Where(whereFn, data) {
-    rows = [];
-
-    data.forEach(row => {
-        if (whereFn(row) == true) rows.push(row);
-    })
-
-    return rows;
-}
+/======================================================================/
 
 /**
- * Function: customSort
+ * Function: Sort
  * Purpose:  Sort data using the parsed SQL
  * Params:   OrderBy(multi) - The parsed OrderBy statement
- *           data(object)   - Data to sort
+ *           data(object)   - Data to sort (if none uses me.LastResult)
  * Returns:  object
  ****************************************************************/
- function Sort(groups, data) {
+ function Sort(me, groups, data=false) {
     function isNumber(n)      { return !isNaN(parseFloat(n)) && isFinite(n); }
     function isNull(obj, def) { return obj ? obj : def;                      }
-    
+ 
+
     function getSchema(data)  {
         let Schema = {};
 
@@ -216,58 +211,102 @@ function Where(whereFn, data) {
 
     /=========================================================================/
 
-    let schema = getSchema(data);
+    if (me.hasOrderBy) {
+        if (!data) data = me.LastResult;
+        let schema = getSchema(data);
 
-    // Check groups for errors 
-    if (!Array.isArray(groups)) groups = [[groups, "desc"]];
-    else groups = groups.map(group => { 
-        if (Array.isArray(group) == false) return [group, "desc"]
-        if (group.length == 1) group.push("desc") 
-        return group;
-    });
-    
-    data.sort(function (a, b) {
-        let group = [];
-
-        groups.forEach(key => {
-            let isCol = key[0];
-            let isRev = (key[1] == "asc") ? true : false;
-
-            //console.log(key, isCol);
-            if (schema[isCol].type == "isNumber") {
-                let col1 = a[isCol] ? Number(a[isCol]) : -90000000;
-                let col2 = b[isCol] ? Number(b[isCol]) : -90000000;
-                
-                if (isRev) group.push(col1 - col2);
-                else group.push(col2 - col1);
-            } else {
-                let col1 = a[isCol] ? a[isCol].toString().toLowerCase() : "";
-                let col2 = b[isCol] ? b[isCol].toString().toLowerCase() : "";
-
-                if (isRev) group.push(col1.localeCompare(col2));
-                else group.push(col2.localeCompare(col1));
-            }
+        // Check groups for errors 
+        if (!Array.isArray(groups)) groups = [[groups, "desc"]];
+        else groups = groups.map(group => { 
+            if (Array.isArray(group) == false) return [group, "desc"]
+            if (group.length == 1) group.push("desc") 
+            return group;
         });
+        
+        data.sort(function (a, b) {
+            let group = [];
 
-        return eval(group.join(' || '));
-    });
+            groups.forEach(key => {
+                let isCol = key[0];
+                let isRev = (key[1] == "asc") ? true : false;
 
-    return data;
+                if (schema[isCol].type == "isNumber") {
+                    let col1 = a[isCol] ? Number(a[isCol]) : -90000000;
+                    let col2 = b[isCol] ? Number(b[isCol]) : -90000000;
+                    
+                    if (isRev) group.push(col1 - col2);
+                    else group.push(col2 - col1);
+                } else {
+                    let col1 = a[isCol] ? a[isCol].toString().toLowerCase() : "";
+                    let col2 = b[isCol] ? b[isCol].toString().toLowerCase() : "";
+
+                    if (isRev) group.push(col1.localeCompare(col2));
+                    else group.push(col2.localeCompare(col1));
+                }
+            });
+
+            return eval(group.join(' || '));
+        });
+    }
+
+    me.LastResult = data;
+    return me;
 }
 
-function Select(selections, data) { 
+/**
+ * Function: Where
+ * Purpose:  Preforms where on the dataset
+ * Params:   me(object)      - Calling class
+ *           whereFn(fn)     - The where function (from buildWhere)
+ *           data(object)    - Data to use (if none uses me.LastResult)
+ * Returns:  object
+ ****************************************************************/
+ function Where(me, whereFn, data=false) {
+    rows = [];
+
+    if (me.hasWhere) {
+        if (!data) data = me.LastResult;
+
+        data.forEach(row => {
+            if (whereFn(row) == true) rows.push(row);
+        })
+
+        me.LastResult = rows;
+    }
+    
+    return me;
+}
+
+
+/**
+ * Function: Select
+ * Purpose:  Preforms select on the dataset
+ * Params:   me(object)         - Calling class
+ *           selections(array)  - The parsed select
+ *           data(object)       - Data to use (if none uses me.LastResult)
+ * Returns:  object
+ ****************************************************************/
+ function Select(me, selections, data=false) { 
     let rows = [];
 
-    data.forEach(row => {
-        let tmp = {};
+    if (me.hasSelect) {
+        if (!data) data = me.LastResult;
 
-        Object.keys(row).forEach(col => {
-            if (selections.includes(col)) tmp[col]=row[col];
+        data.forEach(row => {
+            let tmp = {};
+
+            Object.keys(row).forEach(col => {
+                if (selections.includes(col) || selections.length == 0) {
+                    tmp[col]=row[col];
+                }
+            });
+            rows.push(tmp);
         });
-        rows.push(tmp);
-    });
 
-    return rows;
+        me.LastResult = rows;
+    }
+
+    return me;
 }
 
 module.exports = SQLParse;

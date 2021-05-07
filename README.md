@@ -5,6 +5,7 @@ Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  
 Only supports select, where and orderby.
 
 ### *Functions*
+* Some Functions are now chainable, marked with __(chain)__
 ---
 - **hasQuery**: Is the query set?
 - **hasSelect**: Does the query have a **Select** statement
@@ -19,9 +20,9 @@ Only supports select, where and orderby.
 - **isWhere**: Return **true** || **false** if the data matches the **Where** statement
 - **renderTree**: Render the parsed query
 ---
-- **sort**: Sort the dataset
-- **where**: Apply the **Where** query to the dataset
-- **select**: Apply the **Select** query to the dataset
+- **sort**: Sort the dataset __(chain)__
+- **where**: Apply the **Where** query to the dataset __(chain)__
+- **select**: Apply the **Select** query to the dataset __(chain)__
     - Functions for **Select** are not implemented yet
 ---
 
@@ -37,10 +38,18 @@ To change the current query simply set the value of the query property:<br>
 `parser.isWhere({name:"matthew", color="Blue"});`
 
 **Sort the Database**
-`parser.sort([database]);`
+`parser.sort([database]).results();`
 
 **Where the Database (returns the matching rows)**
-`parser.where([database]);`
+`parser.where([database]).results();`
+
+**Select the Database**
+`parser.select([database]).results();`
+
+**Do it all**
+`parser.sort([database]).where().select().results()`
+
+As you can see in the above query, you only need to set the dataset for the first function in the chain.
 
 ## *Test Results*
 ```
