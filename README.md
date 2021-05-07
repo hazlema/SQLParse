@@ -5,7 +5,7 @@ Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  
 Only supports select, where and orderby.
 
 ### *Functions*
-* Some Functions are now chainable, marked with __(chain)__
+* Some Functions are now chainable, marked with <span style="color:yellow;font-weight:bolder">(chain)</span>
 ---
 - **hasQuery**: Is the query set?
 - **hasSelect**: Does the query have a **Select** statement
@@ -20,9 +20,9 @@ Only supports select, where and orderby.
 - **isWhere**: Return **true** || **false** if the data matches the **Where** statement
 - **renderTree**: Render the parsed query
 ---
-- **sort**: Sort the dataset __(chain)__
-- **where**: Apply the **Where** query to the dataset __(chain)__
-- **select**: Apply the **Select** query to the dataset __(chain)__
+- **sort**: Sort the dataset <span style="color:yellow;font-weight:bolder">(chain)</span>
+- **where**: Apply the **Where** query to the dataset <span style="color:yellow;font-weight:bolder">(chain)</span>
+- **select**: Apply the **Select** query to the dataset <span style="color:yellow;font-weight:bolder">(chain)</span>
     - Functions for **Select** are not implemented yet
 ---
 
@@ -51,7 +51,7 @@ To change the current query simply set the value of the query property:<br>
 
 As you can see in the above query, you only need to set the dataset for the first function in the chain.
 
-The chain is smart, for instance if there is no **Where** statement in your query and you chain processes **Where**, it will skip over that part.
+The chain is smart, for instance if there is no **Where** statement in your query,  your chain processes will skip over that part.
 
 ## *Test Results*
 ```
