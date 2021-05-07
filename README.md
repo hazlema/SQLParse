@@ -21,6 +21,8 @@ Only supports select, where and orderby.
 ---
 - **sort**: Sort the dataset
 - **where**: Apply the **Where** query to the dataset
+- **select**: Apply the **Select** query to the dataset
+    - Functions for **Select** are not implemented yet
 ---
 
 #### *You only need to initialize the SQLParse object once*
@@ -94,15 +96,18 @@ Parsed query structure:
 Parsing test, No results expected
 
 ===[ Test #2 ]==============================================
-Query:       where (name=/frank/i and color=/green/i) orderby name, num
+Query:       select name, color where (name=/frank/i and color=/green/i) orderby name, num
 
-hasSelect:   false / []
+hasSelect:   true / ["name","color"]
 hasWhere:    true / ["(",["name","=","/frank/i"],"and",["color","=","/green/i"],")"]
 hasOrderBy:  true / ["name","num"]
 
 Parsed query structure:
 {
-     "Select": [],
+     "Select": [
+          "name",
+          "color"
+     ],
      "Where": [
           "(",
           [
@@ -124,7 +129,7 @@ Parsed query structure:
      ]
 }
 ===[ Test #2 Results ]======================================
-{ name: 'Frank', color: 'green', num: 0.2 }
+[ { name: 'Frank', color: 'green' } ]
 
 ===[ Test #3 ]==============================================
 Query:       where (color=/green/i or num=20) orderby name, num
@@ -157,10 +162,10 @@ Parsed query structure:
      ]
 }
 ===[ Test #3 Results ]======================================
-{ name: 'Sandy', color: 'green', num: 0 }
-{ name: 'Molly', color: 'green', num: 50 }
-{ name: 'frank', color: 'yellow', num: 20 }
-{ name: 'Frank', color: 'green', num: 0.2 }
+[ { name: 'Sandy', color: 'green', num: 0 },
+  { name: 'Molly', color: 'green', num: 50 },
+  { name: 'frank', color: 'yellow', num: 20 },
+  { name: 'Frank', color: 'green', num: 0.2 } ]
 
 ===[ Test #4 ]==============================================
 Query:       where (num=null) orderby name, num
@@ -187,11 +192,11 @@ Parsed query structure:
      ]
 }
 ===[ Test #4 Results ]======================================
-{ name: 'sisko', series: 'DS9' }
-{ name: 'Quark', series: 'DS9' }
-{ name: 'Q', series: 'TNG' }
-{ name: 'Garak', series: 'DS9' }
-{ name: 'Alice', color: 'blue' }
+[ { name: 'sisko', series: 'DS9' },
+  { name: 'Quark', series: 'DS9' },
+  { name: 'Q', series: 'TNG' },
+  { name: 'Garak', series: 'DS9' },
+  { name: 'Alice', color: 'blue' } ]
 
 ===[ Test #5 ]==============================================
 Query:       where (color=/bright\sblue/i) orderby name, num
@@ -218,8 +223,8 @@ Parsed query structure:
      ]
 }
 ===[ Test #5 Results ]======================================
-{ name: 'Frank', color: 'bright blue', num: 70 }
-{ name: 'Angie', color: 'bright blue', num: 300 }
+[ { name: 'Frank', color: 'bright blue', num: 70 },
+  { name: 'Angie', color: 'bright blue', num: 300 } ]
 
 ===[ Test #6 ]==============================================
 Query:       where (color="bright blue") orderby name, num
@@ -246,19 +251,22 @@ Parsed query structure:
      ]
 }
 ===[ Test #6 Results ]======================================
-{ name: 'Frank', color: 'bright blue', num: 70 }
-{ name: 'Angie', color: 'bright blue', num: 300 }
+[ { name: 'Frank', color: 'bright blue', num: 70 },
+  { name: 'Angie', color: 'bright blue', num: 300 } ]
 
 ===[ Test #7 ]==============================================
-Query:       where (name=/^f/i) orderby name, num
+Query:       select name, num where (name=/^f/i) orderby name, num
 
-hasSelect:   false / []
+hasSelect:   true / ["name","num"]
 hasWhere:    true / ["(",["name","=","/^f/i"],")"]
 hasOrderBy:  true / ["name","num"]
 
 Parsed query structure:
 {
-     "Select": [],
+     "Select": [
+          "name",
+          "num"
+     ],
      "Where": [
           "(",
           [
@@ -274,10 +282,10 @@ Parsed query structure:
      ]
 }
 ===[ Test #7 Results ]======================================
-{ name: 'Frank', color: 'bright blue', num: 70 }
-{ name: 'frank', color: 'yellow', num: 20 }
-{ name: 'fraNK', color: 'red', num: 8 }
-{ name: 'Frank', color: 'green', num: 0.2 }
+[ { name: 'Frank', num: 70 },
+  { name: 'frank', num: 20 },
+  { name: 'fraNK', num: 8 },
+  { name: 'Frank', num: 0.2 } ]
 
 ===[ Test #8 ]==============================================
 Query:       where (name!=/^f/i) orderby name, num
@@ -304,29 +312,32 @@ Parsed query structure:
      ]
 }
 ===[ Test #8 Results ]======================================
-{ name: 'steve', color: 'yellow', num: 0 }
-{ name: 'sisko', series: 'DS9' }
-{ name: 'Sandy', color: 'green', num: 0 }
-{ name: 'Quark', series: 'DS9' }
-{ name: 'Q', series: 'TNG' }
-{ name: 'Molly', color: 'green', num: 50 }
-{ name: 'Matthew', color: 'red', num: 90 }
-{ name: 'Grace', color: 'blue', num: 300 }
-{ name: 'Garak', series: 'DS9' }
-{ name: 'Angie', color: 'bright blue', num: 300 }
-{ name: 'Alice', color: 'blue' }
-{ name: 'alex', color: 'blue', num: 0.1 }
+[ { name: 'steve', color: 'yellow', num: 0 },
+  { name: 'sisko', series: 'DS9' },
+  { name: 'Sandy', color: 'green', num: 0 },
+  { name: 'Quark', series: 'DS9' },
+  { name: 'Q', series: 'TNG' },
+  { name: 'Molly', color: 'green', num: 50 },
+  { name: 'Matthew', color: 'red', num: 90 },
+  { name: 'Grace', color: 'blue', num: 300 },
+  { name: 'Garak', series: 'DS9' },
+  { name: 'Angie', color: 'bright blue', num: 300 },
+  { name: 'Alice', color: 'blue' },
+  { name: 'alex', color: 'blue', num: 0.1 } ]
 
 ===[ Test #9 ]==============================================
-Query:       where (series="DS9" or series="TNG") orderby series
+Query:       select name, series where (series="DS9" or series="TNG") orderby series
 
-hasSelect:   false / []
+hasSelect:   true / ["name","series"]
 hasWhere:    true / ["(",["series","=","\"DS9\""],"or",["series","=","\"TNG\""],")"]
 hasOrderBy:  true / ["series"]
 
 Parsed query structure:
 {
-     "Select": [],
+     "Select": [
+          "name",
+          "series"
+     ],
      "Where": [
           "(",
           [
@@ -347,8 +358,49 @@ Parsed query structure:
      ]
 }
 ===[ Test #9 Results ]======================================
-{ name: 'Q', series: 'TNG' }
-{ name: 'Garak', series: 'DS9' }
-{ name: 'Quark', series: 'DS9' }
-{ name: 'sisko', series: 'DS9' }
+[ { name: 'Q', series: 'TNG' },
+  { name: 'Garak', series: 'DS9' },
+  { name: 'Quark', series: 'DS9' },
+  { name: 'sisko', series: 'DS9' } ]
+
+===[ Test #10 ]==============================================
+Query:       where (num=null or num=0) orderby name asc
+
+hasSelect:   false / []
+hasWhere:    true / ["(",["num","=","null"],"or",["num","=","0"],")"]
+hasOrderBy:  true / [["name","asc"]]
+
+Parsed query structure:
+{
+     "Select": [],
+     "Where": [
+          "(",
+          [
+               "num",
+               "=",
+               "null"
+          ],
+          "or",
+          [
+               "num",
+               "=",
+               "0"
+          ],
+          ")"
+     ],
+     "OrderBy": [
+          [
+               "name",
+               "asc"
+          ]
+     ]
+}
+===[ Test #10 Results ]======================================
+[ { name: 'Alice', color: 'blue' },
+  { name: 'Garak', series: 'DS9' },
+  { name: 'Q', series: 'TNG' },
+  { name: 'Quark', series: 'DS9' },
+  { name: 'Sandy', color: 'green', num: 0 },
+  { name: 'sisko', series: 'DS9' },
+  { name: 'steve', color: 'yellow', num: 0 } ]
 ```

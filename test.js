@@ -38,20 +38,31 @@ let test   = function(index, query, data) {
         `===[ Test #${index} Results ]======================================`);
 
    
+    // TODO: Make functions chainable with ability to skip a link 
+    // (ex. If there is no where and it's in the chain skip it)
     if (data) {
-        if (parser.hasOrderBy) parser.sort(data);
-        if (parser.hasWhere)   console.log( parser.where(data) );
+        if (parser.hasOrderBy()) parser.sort(data);
+        
+        if ((parser.hasWhere() == true) && (parser.hasSelect() == true))
+           console.log( parser.select(parser.where(data)));
+        
+        else if (parser.hasWhere() == true)
+            console.log( parser.where(data));
+        
+        else if (parser.hasSelect() == true)
+            console.log( parser.select(data));
+    
     } else console.log(`Parsing test, No results expected`);
 }
 
 // Tests
 test(1, `select max(name), num, color where ((name=0 and color = "Bright Blue") or num = 5) orderby name asc, color desc, num`);
-test(2, `where (name=/frank/i and color=/green/i) orderby name, num`, db);
+test(2, `select name, color where (name=/frank/i and color=/green/i) orderby name, num`, db);
 test(3, `where (color=/green/i or num=20) orderby name, num`, db);
 test(4, `where (num=null) orderby name, num`, db);
 test(5, `where (color=/bright\\sblue/i) orderby name, num`, db);
 test(6, `where (color="bright blue") orderby name, num`, db);
-test(7, `where (name=/^f/i) orderby name, num`, db);
+test(7, `select name, num where (name=/^f/i) orderby name, num`, db);
 test(8, `where (name!=/^f/i) orderby name, num`, db);
-test(9, `where (series = "DS9" or series="TNG") orderby series`, db);
+test(9, `select name, series where (series = "DS9" or series="TNG") orderby series`, db);
 test(10, `where (num=null or num=0) orderby name asc`, db);

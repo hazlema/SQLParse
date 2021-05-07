@@ -24,6 +24,7 @@ let SQLParse = function(queryString) {
 
     this.where       = function(db) { return Where(this.isWhere, db)       };
     this.sort        = function(db) { return Sort(this.Parsed.OrderBy, db) };
+    this.select      = function(db) { return Select(this.Parsed.Select, db) };
 }
 
 // Changing the query property will repopulate the tree
@@ -252,6 +253,21 @@ function Where(whereFn, data) {
     });
 
     return data;
+}
+
+function Select(selections, data) { 
+    let rows = [];
+
+    data.forEach(row => {
+        let tmp = {};
+
+        Object.keys(row).forEach(col => {
+            if (selections.includes(col)) tmp[col]=row[col];
+        });
+        rows.push(tmp);
+    });
+
+    return rows;
 }
 
 module.exports = SQLParse;
