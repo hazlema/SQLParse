@@ -37,19 +37,21 @@ To change the current query simply set the value of the query property:<br>
 **Single where (returns true):**
 `parser.isWhere({name:"matthew", color="Blue"});`
 
-**Sort the Database**
-`parser.sort([database]).results();`
+**Sort the DataSet**
+`parser.sort([dataset]).results();`
 
-**Where the Database (returns the matching rows)**
-`parser.where([database]).results();`
+**Where the DataSet**
+`parser.where([dataset]).results();`
 
-**Select the Database**
-`parser.select([database]).results();`
+**Select the DataSet**
+`parser.select([dataset]).results();`
 
 **Do it all**
-`parser.sort([database]).where().select().results()`
+`parser.sort([dataset]).where().select().results()`
 
 As you can see in the above query, you only need to set the dataset for the first function in the chain.
+
+The chain is smart, for instance if there is no **Where** statement in your query and you chain processes **Where**, it will skip over that part.
 
 ## *Test Results*
 ```
