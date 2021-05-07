@@ -1,26 +1,26 @@
 # *SQLParse*
 
-Basic JS SQLParser, creates an object (array of arrays) of the query.
+Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  You can then apply the query to a dataset.
 
-Only supports select, where and orderby
+Only supports select, where and orderby.
 
 ### *Functions*
 ---
 - **hasQuery**: Is the query set?
-- **hasSelect**: Does the query have a Select statement
-- **hasWhere**: Does the query have a Where statement
-- **hasOrderBy**: Does the query have an OrderBy statement
+- **hasSelect**: Does the query have a **Select** statement
+- **hasWhere**: Does the query have a **Where** statement
+- **hasOrderBy**: Does the query have an **OrderBy** statement
 ---
 - **get**: Return the parsed query
-- **getSelect**: Return the Select of the parsed query
-- **getWhere**: Return the Where of the parsed query
-- **getOrderBy**: Return the OrderBy of the parsed query
+- **getSelect**: Return the **Select** of the parsed query
+- **getWhere**: Return the **Where** of the parsed query
+- **getOrderBy**: Return the **OrderBy** of the parsed query
 ---
-- **isWhere**: Return true|false if the data satisfies
+- **isWhere**: Return **true** || **false** if the data matches the **Where** statement
 - **renderTree**: Render the parsed query
 ---
-- **sort**: Return the sorted object
-- **where**: Runs the where on the db
+- **sort**: Sort the dataset
+- **where**: Apply the **Where** query to the dataset
 ---
 
 #### *You only need to initialize the SQLParse object once*
@@ -34,10 +34,10 @@ To change the current query simply set the value of the query property:<br>
 **Single where (returns true):**
 `parser.isWhere({name:"matthew", color="Blue"});`
 
-**Sort the Database (returns the database)**
+**Sort the Database**
 `parser.sort([database]);`
 
-**Where the Database (returns the database)**
+**Where the Database (returns the matching rows)**
 `parser.where([database]);`
 
 ## *Test Results*

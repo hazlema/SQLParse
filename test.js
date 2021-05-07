@@ -54,3 +54,4 @@ test(6, `where (color="bright blue") orderby name, num`, db);
 test(7, `where (name=/^f/i) orderby name, num`, db);
 test(8, `where (name!=/^f/i) orderby name, num`, db);
 test(9, `where (series = "DS9" or series="TNG") orderby series`, db);
+test(10, `where (num=null or num=0) orderby name asc`, db);
