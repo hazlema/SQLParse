@@ -5,49 +5,62 @@ Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  
 Only supports select, where and orderby.
 
 ### *Functions*
-* Some Functions are now chainable, marked with &#x1F517;
----
-- **hasQuery**: Is the query set?
-- **hasSelect**: Does the query have a **Select** statement
-- **hasWhere**: Does the query have a **Where** statement
-- **hasOrderBy**: Does the query have an **OrderBy** statement
----
-- **get**: Return the parsed query
-- **getSelect**: Return the **Select** of the parsed query
-- **getWhere**: Return the **Where** of the parsed query
-- **getOrderBy**: Return the **OrderBy** of the parsed query
----
-- **isWhere**: Return **true** || **false** if the data matches the **Where** statement
-- **renderTree**: Render the parsed query
----
-- &#x1F517; **sort**: Sort the dataset 
-- &#x1F517; **where**: Apply the **Where** query to the dataset 
-- &#x1F517; **select**: Apply the **Select** query to the dataset
-    - Functions for **Select** are not implemented yet
----
+Some Functions are now chainable, marked with &#x1F517;
+| Function | Description |
+| -------- | ----------- |
+| **hasQuery** | Is the query set? |
+| **hasSelect** |  Does the query have a **Select** statement |
+| **hasWhere** | Does the query have a **Where** statement |
+| **hasOrderBy** | Does the query have an **OrderBy** statement |
+|  |  |
+| **get** | Return the parsed query |
+| **getSelect** | Return the **Select** of the parsed query |
+| **getWhere** | Return the **Where** of the parsed query |
+| **getOrderBy** | Return the **OrderBy** of the parsed query |
+|  |  |
+| **isWhere** | Return **true** or **false** if the data matches the **Where** statement |
+| **renderTree** | Render the parsed query |
+|  |  |
+| &#x1F517; **sort** | Sort the dataset |
+| &#x1F517; **where** | Apply the **Where** query to the dataset |
+| &#x1F517; **select** | Apply the **Select** query to the dataset |
 
 #### *You only need to initialize the SQLParse object once*
 
 To change the current query simply set the value of the query property:<br>
-```object.query = "select * where new=true"```
+```js
+object.query = "select * where new=true"
+```
 
 ### Quick examples
-`let parser = new SQLParse('where (name=/matthew/i and color = "Blue")');`
+```js
+let parser = new SQLParse('where (name=/matthew/i and color = "Blue")');
+```
 
 **Single where (returns true):**
-`parser.isWhere({name:"matthew", color="Blue"});`
+```js
+parser.isWhere({name:"matthew", color="Blue"});
+```
 
 **Sort the DataSet**
-`parser.sort([dataset]).results();`
+```js
+parser.sort([dataset]).results();
+```
 
 **Where the DataSet**
-`parser.where([dataset]).results();`
+```js
+parser.where([dataset]).results();
+```
 
 **Select the DataSet**
-`parser.select([dataset]).results();`
+```js
+parser.select([dataset]).results();
+```
 
 **Do it all**
-`parser.sort([dataset]).where().select().results()`
+```js
+parser.sort([dataset]).where().select().results()
+```
 
 As you can see in the above query, you only need to set the dataset for the first function in the chain.
 
