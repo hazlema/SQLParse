@@ -29,7 +29,7 @@ Some Functions are now chainable, marked with &#x1F517;
 
 To change the current query simply set the value of the query property:<br>
 ```js
-object.query = "select * where new=true"
+object.query = "where new=true"
 ```
 
 ### Quick examples
