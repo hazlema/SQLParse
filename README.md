@@ -5,7 +5,7 @@ Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  
 Only supports select, where and orderby.
 
 ### *Functions*
-* Some Functions are now chainable, marked with &#x1F536;
+* Some Functions are now chainable, marked with &#x1F517;
 ---
 - **hasQuery**: Is the query set?
 - **hasSelect**: Does the query have a **Select** statement
@@ -20,9 +20,9 @@ Only supports select, where and orderby.
 - **isWhere**: Return **true** || **false** if the data matches the **Where** statement
 - **renderTree**: Render the parsed query
 ---
-- &#x1F536; **sort**: Sort the dataset 
-- &#x1F536; **where**: Apply the **Where** query to the dataset 
-- &#x1F536; **select**: Apply the **Select** query to the dataset
+- &#x1F517; **sort**: Sort the dataset 
+- &#x1F517; **where**: Apply the **Where** query to the dataset 
+- &#x1F517; **select**: Apply the **Select** query to the dataset
     - Functions for **Select** are not implemented yet
 ---
 
