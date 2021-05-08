@@ -270,10 +270,8 @@ function preParse(str) {
         data.forEach(row => {
             if (whereFn(row) == true) rows.push(row);
         })
-
         me.LastResult = rows;
     }
-    
     return me;
 }
 
@@ -302,10 +300,8 @@ function preParse(str) {
             });
             rows.push(tmp);
         });
-
         me.LastResult = rows;
     }
-
     return me;
 }
 
