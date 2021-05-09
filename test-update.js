@@ -21,7 +21,13 @@ const db = [
 ];
 
 console.log("** Updating records, setting green colors to gray **");
+let parser = new SQLParse();
 
 console.log( 
-    new SQLParse('where color="green"').update({color: "gray"}, db).results()
+    parser
+        .setQuery('where color="green"')
+        .update({
+            color: "gray",
+            newData: "inserted"
+        }, db).results()
 );

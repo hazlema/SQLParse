@@ -22,6 +22,7 @@ Some Functions are now chainable, marked with &#x1F517;
 | **isWhere** | Return **true** or **false** if the data matches the **Where** statement |
 | **renderTree** | Render the parsed query |
 |  |  |
+| &#x1F517; **setQuery** | Shortcut to set the query property |
 | &#x1F517; **sort** | Sort the dataset |
 | &#x1F517; **where** | Apply the **Where** query to the dataset |
 | &#x1F517; **select** | Apply the **Select** query to the dataset |
@@ -71,9 +72,9 @@ The chain is smart, for instance if there is no **Where** statement in your quer
 ```js
 parser.update({key: value}, [dataset]);
 ```
-or just
+or
 ```js
-parser.update({key: value});
+parser.setQuery([query]).update({key: value}, [dataset]);
 ```
 If the dataset is not specified the last dataset is used. Look at `test-update.js` for an example.
 

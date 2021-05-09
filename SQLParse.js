@@ -7,7 +7,7 @@
 let SQLParse = function(queryString) {
     if (queryString) this.query = queryString;
 
- /* this.query       = Assigned in the defineProperty for query */
+    this.setQuery    = function(q)  { this.query = q; return this; }
 
     this.hasQuery    = function()   { return this.Query                 != ""; }
     this.hasSelect   = function()   { return this.Parsed.Select.length  != 0;  }
