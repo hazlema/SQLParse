@@ -1,5 +1,5 @@
-Dataset before any modifications
 
+===[ DataSet Dump (Before Changes) ]====================================
 [ { name: 'Matthew', color: 'red', num: 90 },
   { name: 'fraNK', color: 'red', num: 8 },
   { name: 'Alice', color: 'blue' },
@@ -17,10 +17,41 @@ Dataset before any modifications
   { name: 'Sandy', color: 'green', num: 0 },
   { name: 'Angie', color: 'bright blue', num: 300 } ]
 
-** Updating records, setting green and yellow colors to gray **
+===[ Test #1 ]==============================================
+Change Yellow and Green records to gray and insert column newData
 
 [ { name: 'steve', color: 'gray', newData: 'inserted' },
   { name: 'frank', color: 'gray', newData: 'inserted' },
   { name: 'Frank', color: 'gray', newData: 'inserted' },
   { name: 'Molly', color: 'gray', newData: 'inserted' },
   { name: 'Sandy', color: 'gray', newData: 'inserted' } ]
+
+===[ Test #2 ]==============================================
+Updating records, setting all a's to a num of 99
+
+[ { name: 'Angie', num: 99 },
+  { name: 'alex', num: 99 },
+  { name: 'Alice', num: 99 } ]
+
+===[ Test #3 ]==============================================
+Changing Q's series to Voyager
+
+[ { name: 'Q', series: 'Voyager' } ]
+
+===[ DataSet Dump (After Changes) ]====================================
+[ { name: 'Angie', color: 'bright blue', num: 99 },
+  { name: 'Grace', color: 'blue', num: 300 },
+  { name: 'Matthew', color: 'red', num: 90 },
+  { name: 'Frank', color: 'bright blue', num: 70 },
+  { name: 'Molly', color: 'gray', num: 50, newData: 'inserted' },
+  { name: 'frank', color: 'gray', num: 20, newData: 'inserted' },
+  { name: 'fraNK', color: 'red', num: 8 },
+  { name: 'Frank', color: 'gray', num: 0.2, newData: 'inserted' },
+  { name: 'alex', color: 'blue', num: 99 },
+  { name: 'Alice', color: 'blue', num: 99 },
+  { name: 'Garak', series: 'DS9' },
+  { name: 'steve', color: 'gray', num: 0, newData: 'inserted' },
+  { name: 'Q', series: 'Voyager' },
+  { name: 'sisko', series: 'DS9' },
+  { name: 'Sandy', color: 'gray', num: 0, newData: 'inserted' },
+  { name: 'Quark', series: 'DS9' } ]

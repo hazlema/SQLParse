@@ -1,4 +1,5 @@
 const SQLParse = require(`./SQLParse.js`);
+let parser = new SQLParse();
 
 // Testing database
 const db = [
@@ -20,18 +21,41 @@ const db = [
         { name: "Angie",   color:  "bright blue", num: 300 },
 ];
 
-let parser = new SQLParse();
+function test(index, desc, fn) {
+    console.log(`\n===[ Test #${index} ]==============================================\n` +
+                `${desc}\n`);
 
-console.log("Dataset before any modifications\n");
+    console.log( eval(fn) );
+}
+
+console.log(`\n===[ DataSet Dump (Before Changes) ]====================================`);
 console.log(db);
 
-console.log("\n** Updating records, setting green and yellow colors to gray **\n");
-
-console.log( 
+test(1, "Change Yellow and Green records to gray and insert column newData", `
     parser
         .setQuery('select name, color, newData where color="green" or color="yellow"')
         .update({
             color: "gray",
             newData: "inserted"
         }, db).results()
-);
+`);
+
+test(2, "Updating records, setting all a's to a num of 99", `
+    parser.query = "select name, num where name=/^a/i orderby num";
+
+    parser
+        .sort(db)
+        .update({num: 99})
+        .results()
+`);
+
+test(3, "Changing Q's series to Voyager", `
+    parser.query = "where name='Q'";
+
+    parser
+        .update({series: "Voyager"}, db)
+        .results()
+`);
+
+console.log(`\n===[ DataSet Dump (After Changes) ]====================================`);
+console.log(db);

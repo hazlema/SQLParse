@@ -68,16 +68,20 @@ As you can see in the above query, you only need to set the dataset for the firs
 
 The chain is smart, for instance if there is no **Where** statement in your query,  your chain processes will skip over that part.
 
-**Update the DataSet**
+**Update the DataSet (3 examples)**
 ```js
+parser.query = "[query]";
 parser.update({key: value}, [dataset]);
 ```
-or
 ```js
 parser.setQuery([query]).update({key: value}, [dataset]);
 ```
-If the dataset is not specified the last dataset is used. Look at `test-update.js` for an example.
-
+```js
+parser.query = "[query]";
+parser.sort([dataset]).update({key: value}).results();
+```
+- If the query is not specified the last query is used. Look at `test-update.js` for an example.
+- The same rules for chained functions apply, the dataset to use only needs to be set in the first link in the chain.
 ## *Test Results*
 - [Latest Query Test Results](test-query.txt)
 - [Latest Update Test Results](test-update.txt)
