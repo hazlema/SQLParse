@@ -20,7 +20,8 @@ const db = [
         { name: "Angie",   color:  "bright blue", num: 300 },
 ];
 
-let parser = new SQLParse('where color="green"');
+console.log("** Updating records, setting green colors to gray **");
 
-console.log("\n** Updating records, setting green colors to gray **\n");
-console.log( parser.update({color: "gray"}, db).results() );
+console.log( 
+    new SQLParse('where color="green"').update({color: "gray"}, db).results()
+);
