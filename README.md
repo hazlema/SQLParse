@@ -1,6 +1,6 @@
 
 # *SQLParse*
-###Under Active development
+***Under Heavy development***
 
 Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  You can then apply the query to a dataset.
 
