@@ -78,5 +78,5 @@ parser.update({key: value});
 If the dataset is not specified the last dataset is used. Look at `test-update.js` for an example.
 
 ## *Test Results*
-[Latest Query Test Results](test-query.txt)
-[Latest Update Test Results](test-update.txt)
+- [Latest Query Test Results](test-query.txt)
+- [Latest Update Test Results](test-update.txt)
