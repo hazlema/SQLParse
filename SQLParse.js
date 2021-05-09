@@ -323,6 +323,7 @@ function Update(me, changes, data=false) {
         me.LastResult.push(row);
     })
 
+    me.select();
     return me;
 }
 

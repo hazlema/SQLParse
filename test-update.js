@@ -20,12 +20,16 @@ const db = [
         { name: "Angie",   color:  "bright blue", num: 300 },
 ];
 
-console.log("** Updating records, setting green colors to gray **");
 let parser = new SQLParse();
+
+console.log("Dataset before any modifications\n");
+console.log(db);
+
+console.log("\n** Updating records, setting green and yellow colors to gray **\n");
 
 console.log( 
     parser
-        .setQuery('where color="green"')
+        .setQuery('select name, color, newData where color="green" or color="yellow"')
         .update({
             color: "gray",
             newData: "inserted"

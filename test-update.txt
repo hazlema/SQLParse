@@ -1,4 +1,4 @@
 ** Updating records, setting green colors to gray **
-[ { name: 'Frank', color: 'gray', num: 0.2, newData: 'inserted' },
-  { name: 'Molly', color: 'gray', num: 50, newData: 'inserted' },
-  { name: 'Sandy', color: 'gray', num: 0, newData: 'inserted' } ]
+[ { name: 'Frank', color: 'gray', newData: 'inserted' },
+  { name: 'Molly', color: 'gray', newData: 'inserted' },
+  { name: 'Sandy', color: 'gray', newData: 'inserted' } ]
