@@ -27,6 +27,10 @@ let SQLParse = function(queryString) {
     this.select      = function(db) { return Select(this, this.Parsed.Select, db) };
 
     this.results     = function()   { return this.LastResult }; 
+
+    this.update      = function(obj, db) { return Update(this, obj, db) }
+
+    return this;
 }
 
 // Changing the query property will repopulate the tree
@@ -302,6 +306,23 @@ function preParse(str) {
         });
         me.LastResult = rows;
     }
+    return me;
+}
+
+function Update(me, changes, data=false) { 
+    // Re-run query to make sure there is not a SELECT
+    let whereOnlyDB = me.where(data).results();
+    
+    // Clear the last results
+    me.LastResult = [];
+
+    whereOnlyDB.forEach(row => {
+        Object.keys(changes).forEach(change => {
+            row[change] = changes[change];
+        })
+        me.LastResult.push(row);
+    })
+
     return me;
 }
 

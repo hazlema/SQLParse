@@ -2,9 +2,9 @@
   "name": "sqlparse",
   "version": "1.0.0",
   "description": "Parse a basic SQL statment, only supports select, where and orderby",
-  "main": "test.js",
+  "main": "SQLParse.js",
   "scripts": {
-    "start": "node test.js"
+    "txt": "node test-query.js > test-query.txt; node test-update.js > test-update.txt"
   },
   "repository": {
     "type": "git",

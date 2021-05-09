@@ -1,3 +1,4 @@
+
 # *SQLParse*
 
 Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  You can then apply the query to a dataset.
@@ -24,6 +25,7 @@ Some Functions are now chainable, marked with &#x1F517;
 | &#x1F517; **sort** | Sort the dataset |
 | &#x1F517; **where** | Apply the **Where** query to the dataset |
 | &#x1F517; **select** | Apply the **Select** query to the dataset |
+| &#x1F517; **update** | Apply the updates to the dataset |
 
 #### *You only need to initialize the SQLParse object once*
 
@@ -61,10 +63,20 @@ parser.select([dataset]).results();
 ```js
 parser.sort([dataset]).where().select().results()
 ```
-
 As you can see in the above query, you only need to set the dataset for the first function in the chain.
 
 The chain is smart, for instance if there is no **Where** statement in your query,  your chain processes will skip over that part.
 
+**Update the DataSet**
+```js
+parser.update({key: value}, [dataset]);
+```
+or just
+```js
+parser.update({key: value});
+```
+If the dataset is not specified the last dataset is used. Look at `test-update.js` for an example.
+
 ## *Test Results*
-[Latest Test Results](test.txt)
+[Latest Query Test Results](test-query.txt)
+[Latest Update Test Results](test-update.txt)

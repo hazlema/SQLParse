@@ -38,7 +38,6 @@ let test   = function(index, query, data) {
         `===[ Test #${index} Results ]======================================`);
 
    
-    // TODO: Add skip logic
     if (data) {
         console.log( parser.sort(data).where().select().results() );
     } else console.log(`Parsing test, No results expected`);
