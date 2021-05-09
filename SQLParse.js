@@ -310,20 +310,30 @@ function preParse(str) {
 }
 
 function Update(me, changes, data=false) { 
+    if (!data) data = me.LastResult;
+
     // Re-run query to make sure there is not a SELECT
-    let whereOnlyDB = me.where(data).results();
+    // A select will break references
+    me.where(data);
     
+    // Set the 'WHERE' dataset
+    let whereOnly = me.LastResult;
+
     // Clear the last results
     me.LastResult = [];
 
-    whereOnlyDB.forEach(row => {
+    // Apply Changes
+    whereOnly.forEach(row => {
         Object.keys(changes).forEach(change => {
             row[change] = changes[change];
         })
         me.LastResult.push(row);
     })
 
+    // Apply sort and select to the dataset
+    me.sort();
     me.select();
+
     return me;
 }
 
