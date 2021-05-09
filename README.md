@@ -1,6 +1,6 @@
 
 # *SQLParse*
-***Under Heavy development***
+&#x1F6A7; ***Under Heavy Development*** &#x1F6A7;
 
 Basic JS SQLParser, creates an object that contains the parsed SQL(ish) query.  You can then apply the query to a dataset.
 
