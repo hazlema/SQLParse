@@ -22,4 +22,7 @@
     "url": "https://github.com/hazlema/SQLParse/issues"
   },
   "homepage": "https://github.com/hazlema/SQLParse#readme",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
 }
