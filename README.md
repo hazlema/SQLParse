@@ -28,7 +28,9 @@ Some Functions are now chainable, marked with &#x1F517;
 | &#x1F517; **where** | Apply the **Where** query to the dataset |
 | &#x1F517; **select** | Apply the **Select** query to the dataset |
 | &#x1F517; **update** | Apply the updates to the dataset |
-
+|  |  |
+| **results** | Returns an array of results
+| **table** | Returns a table of results
 #### *You only need to initialize the SQLParse object once*
 
 To change the current query simply set the value of the query property:<br>

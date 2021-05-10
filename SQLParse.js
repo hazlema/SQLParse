@@ -27,6 +27,7 @@ let SQLParse = function(queryString) {
     this.select      = function(db) { return Select(this, this.Parsed.Select, db) };
 
     this.results     = function()   { return this.LastResult }; 
+    this.table       = function(db) { return toTable(this, db) }; 
 
     this.update      = function(obj, db) { return Update(this, obj, db) }
 
@@ -152,6 +153,7 @@ function preParse(str) {
  * Purpose:  Build a fn that will test against the where statement
  * Params:   where(array) - The parsed where statement
  * Returns:  fn
+ * TODO: Pass in class object
  ****************************************************************/
  function buildWhere(where) {
     let fn    = '';
@@ -160,18 +162,20 @@ function preParse(str) {
 
     function translate(ele) { return trans[ele] ? trans[ele] : ele; }
 
-    where.forEach(ele => {
-        if (typeof ele != 'object') fn += `${translate(ele)} `
-        else if (regex.exec(ele[2])) {
-            if (ele[1] == '!=') fn += `(isNull(data['${ele[0]}']).match(${ele[2]}) == null) `;
-            else fn += `(isNull(data['${ele[0]}']).match(${ele[2]}) != null) `;
-        } else fn += `data['${ele[0]}']${translate(ele[1])}${ele[2]} `;
-    });
+    if (where.length != 0) {
+        where.forEach(ele => {
+            if (typeof ele != 'object') fn += `${translate(ele)} `
+            else if (regex.exec(ele[2])) {
+                if (ele[1] == '!=') fn += `(isNull(data['${ele[0]}']).match(${ele[2]}) == null) `;
+                else fn += `(isNull(data['${ele[0]}']).match(${ele[2]}) != null) `;
+            } else fn += `data['${ele[0]}']${translate(ele[1])}${ele[2]} `;
+        });
 
-    return new Function("data", `
-        function isNull(ele) { return ele ? ele : '' }
-        return (${fn})
-    `);
+        return new Function("data", `
+            function isNull(ele) { return ele ? ele : '' }
+            return (${fn})
+        `);
+    } else return new Function("data", "return true");
 }
 
 /======================================================================/
@@ -335,6 +339,51 @@ function Update(me, changes, data=false) {
     me.select();
 
     return me;
+}
+
+function toTable(me, data=false) {
+    if (!data) data = me.LastResult;
+
+    function getWidths() {
+        let widths = {};
+
+        data.forEach(row => {
+            Object.keys(row).forEach(col => {
+                if (!widths.hasOwnProperty(col))
+                    widths[col] = String(col).length;
+
+                let width = String(row[col]).length;
+                widths[col] = width > widths[col] ? width : widths[col];
+            })
+        })
+        
+        return widths;
+    }
+
+    function build(widths) { 
+        let header = "|";
+        let output = "";
+        let separator = "";
+
+        Object.keys(widths).forEach(col => {
+            header += " {0} |".replace("{0}", col.padEnd(widths[col]));
+        });
+
+        separator = '+{0}+'.replace('{0}', "=".repeat(header.length-2));
+
+        data.forEach(row => {
+            output += '|';
+            Object.keys(widths).forEach(col => {
+                let value = row.hasOwnProperty(col) ? String(row[col]) : "";
+                output += ' {0} |'.replace('{0}', value.padEnd(widths[col]));
+            });
+            output += "\n";
+        })
+
+        return `${separator}\n${header}\n${separator}\n${output}${separator}\n`;
+    }
+
+    return build( getWidths() );
 }
 
 module.exports = SQLParse;
